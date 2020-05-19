@@ -37,7 +37,7 @@
         async function GetFandoms() {
             // отправляет запрос и получаем ответ
             const response = await fetch("/api/Fandoms", {
-                method: "GET",
+                method: "Get",
                 headers: { "Accept": "application/json" }
             });
             // если запрос прошел нормально
@@ -54,7 +54,7 @@
         // Получение одного
         async function GetFandom(ID) {
             const response = await fetch("/api/Fandoms/" + ID, {
-                method: "GET",
+                method: "Get",
                 headers: { "Accept": "application/json" }
             });
             if (response.ok === true) {
@@ -70,7 +70,7 @@
         async function CreateFandom(FandomName, FandomShortDescription, FandomAR) {
 
             const response = await fetch("api/Fandoms", {
-                method: "POST",
+                method: "Post",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
                     Name: FandomName,
@@ -105,7 +105,7 @@
         // Изменение
         async function EditUser(FandomID, FandomName, FandomShortDescription, FandomAR) {
             const response = await fetch("api/Fandoms", {
-                method: "PUT",
+                method: "Put",
                 headers: { "Accept": "application/json", "Content-Type": "application/json" },
                 body: JSON.stringify({
                     ID: parseInt(FandomID, 10),
@@ -123,7 +123,7 @@
         // Удаление
         async function DeleteFandom(ID) {
             const response = await fetch("/api/Fandoms/" + ID, {
-                method: "DELETE",
+                method: "Delete",
                 headers: { "Accept": "application/json" }
             });
             if (response.ok === true) {
