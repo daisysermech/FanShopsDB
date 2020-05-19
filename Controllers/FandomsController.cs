@@ -1,109 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 using FanShopsDB.Models;
+using System.Threading.Tasks;
 
 namespace FanShopsDB.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class FandomsController : ControllerBase
     {
-        private readonly FanShopsDBContext _context;
-
+        FanShopsDBContext db;
         public FandomsController(FanShopsDBContext context)
         {
-            _context = context;
+            db = context;
         }
 
-        // GET: api/Fandoms
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Fandom>>> GetFandoms()
+        public async Task<ActionResult<IEnumerable<Fandom>>> Get()
         {
-            return await _context.Fandoms.ToListAsync();
+            return await db.Fandoms.ToListAsync();
         }
 
-        // GET: api/Fandoms/5
+        // GET api/users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Fandom>> GetFandom(int id)
+        public async Task<ActionResult<Fandom>> Get(int id)
         {
-            var fandom = await _context.Fandoms.FindAsync(id);
-
+            Fandom fandom = await db.Fandoms.FirstOrDefaultAsync(x => x.ID == id);
             if (fandom == null)
-            {
                 return NotFound();
-            }
-
-            return fandom;
+            return new ObjectResult(fandom);
         }
 
-        // PUT: api/Fandoms/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFandom(int id, Fandom fandom)
+        // POST api/users
+        [HttpPost]
+        public async Task<ActionResult<Fandom>> Post(Fandom fandom)
         {
-            if (id != fandom.ID)
+            if (fandom == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(fandom).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FandomExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            db.Fandoms.Add(fandom);
+            await db.SaveChangesAsync();
+            return Ok(fandom);
         }
 
-        // POST: api/Fandoms
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Fandom>> PostFandom(Fandom fandom)
+        // PUT api/users/
+        [HttpPut]
+        public async Task<ActionResult<Fandom>> Put(Fandom fandom)
         {
-            _context.Fandoms.Add(fandom);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFandom", new { id = fandom.ID }, fandom);
-        }
-
-        // DELETE: api/Fandoms/5
-        [HttpDelete("{id}")]
-        public async Task<ActionResult<Fandom>> DeleteFandom(int id)
-        {
-            var fandom = await _context.Fandoms.FindAsync(id);
             if (fandom == null)
+            {
+                return BadRequest();
+            }
+            if (!db.Fandoms.Any(x => x.ID == fandom.ID))
             {
                 return NotFound();
             }
 
-            _context.Fandoms.Remove(fandom);
-            await _context.SaveChangesAsync();
-
-            return fandom;
+            db.Update(fandom);
+            await db.SaveChangesAsync();
+            return Ok(fandom);
         }
 
-        private bool FandomExists(int id)
+        // DELETE api/users/5
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Fandom>> Delete(int id)
         {
-            return _context.Fandoms.Any(e => e.ID == id);
+            Fandom fandom = db.Fandoms.FirstOrDefault(x => x.ID == id);
+            if (fandom == null)
+            {
+                return NotFound();
+            }
+            db.Fandoms.Remove(fandom);
+            await db.SaveChangesAsync();
+            return Ok(fandom);
         }
     }
 }

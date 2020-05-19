@@ -8,7 +8,7 @@
 </head>
 <body>
     <h2>WORLD OF MERCH</h2>
-    <form name="userForm">
+    <form name="fandomForm">
         <input type="hidden" name="ID" value="0" />
         <div class="form-group col-md-5">
             <label for="Name">Fandom Name</label>
@@ -60,7 +60,7 @@
             if (response.ok === true) {
                 const fandom = await response.json();
                 const form = document.forms["fandomForm"];
-                form.elements["ID"].value = fandom.id;
+                form.elements["ID"].value = fandom.ID;
                 form.elements["Name"].value = fandom.Name;
                 form.elements["ShortDescription"].value = fandom.ShortDescription;
                 form.elements["AR"].value = fandom.AR;
@@ -75,13 +75,31 @@
                 body: JSON.stringify({
                     Name: FandomName,
                     ShortDescription: FandomShortDescription,
-                    AR: FandomAR,
+                    AR: FandomAR
                 })
             });
             if (response.ok === true) {
                 const fandom = await response.json();
                 reset();
                 document.querySelector("tbody").append(row(fandom));
+            }
+            else {
+                const errorData = await response.json();
+                console.log("errors", errorData);
+                if (errorData) {
+                    // ошибки вследствие валидации по атрибутам
+                    if (errorData.errors) {
+                         if (errorData.errors["ShortDescription"]) {
+                            addError(errorData.errors["ShortDescription"]);
+                        }
+                    }
+                    // кастомные ошибки, определенные в контроллере
+                    // добавляем ошибки свойства Name
+                    if (errorData["ShortDescription"]) {
+                        addError(errorData["ShortDescription"]);
+                    }
+                }
+                document.getElementById("errors").style.display = "block";
             }
         }
         // Изменение

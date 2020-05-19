@@ -21,6 +21,7 @@ namespace FanShopsDB.Models
 
         [Required(ErrorMessage = "Поле не должно быть пустым.")]
         [Display(Name = "Короткое описание")]
+        [MaxLength(1000, ErrorMessage = "Превышение допустимой длины.")]
         public string ShortDescription { get; set; }
 
         [Required(ErrorMessage = "Поле не должно быть пустым.")]

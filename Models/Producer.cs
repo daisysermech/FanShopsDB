@@ -24,9 +24,9 @@ namespace FanShopsDB.Models
         [Display(Name = "Наценка")]
         public int Pricing { get; set; }
 
-        [Required(ErrorMessage = "Поле не должно быть пустым.")]
+        //[Required(ErrorMessage = "Поле не должно быть пустым.")]
         [Display(Name = "Страна")]
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
 
         public virtual Country Country { get; set; }
         public virtual ICollection<Assortment> Assortments { get; set; }
